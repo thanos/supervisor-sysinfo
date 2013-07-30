@@ -1,16 +1,26 @@
 import xmlrpclib,pprint, json
 from rpcinterface import API_VERSION, SysInfoNamespaceRPCInterface
 
-rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002')
-print "TESTING VERSION"
-assert rpc_proxy.sysinfo.getAPIVersion() == API_VERSION
-print "TESTING rpc_proxy.sysinfo.ps()"
-ps_list = rpc_proxy.sysinfo.ps()
-assert ps_list and type(json.loads(ps_list)) == type({})
-pprint.pprint(json.loads(ps_list))
-#pprint.pprint(SysInfoNamespaceRPCInterface(None).sysInfo())
-print "TESTING rpc_proxy.sysinfo.sysInfo()"
-sysInfo =  rpc_proxy.sysinfo.sysInfo()
+import unittest
 
-assert sysInfo and type(json.loads(sysInfo)) == type({})
-pprint.pprint(json.loads(sysInfo))
+class TestSequenceFunctions(unittest.TestCase):
+
+    def setUp(self):
+        self.rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002')
+
+    def test_getAPIVersion(self):
+		print "testing sysinfo.getAPIVersion()"
+		self.assertEqual(self.rpc_proxy.sysinfo.getAPIVersion(), API_VERSION)
+
+    def test_sysinfo_ps(self):
+		print "testing sysinfo.ps()"
+		ps_list = json.loads(self.rpc_proxy.sysinfo.ps())
+		self.assertEqual(type(ps_list), type({}))
+
+    def test_sysinfo_sysInfo(self):
+		print "testing sysinfo.sysInfo()"
+		sysInfo =  json.loads(self.rpc_proxy.sysinfo.sysInfo())
+		self.assertEqual(type(sysInfo), type({}))
+
+if __name__ == '__main__':
+    unittest.main()

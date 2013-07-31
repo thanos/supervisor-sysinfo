@@ -40,19 +40,19 @@ Use the usual ways::
 Setup
 =====
 
-* In your supervisor.conf file setup::
+In your supervisor.conf file setup::
 
 	[inet_http_server]
 	port = *:9002
 	username = very_safe
 	password = very_safe
 
-* Uncomment::
+Uncomment::
 	
 	[rpcinterface:supervisor]
 	supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
-* Add::
+Add::
 
 	[rpcinterface:sysinfo]
 	supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_rpcinterface

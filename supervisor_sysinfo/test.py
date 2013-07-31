@@ -1,5 +1,5 @@
 import xmlrpclib,pprint, json
-from rpcinterface import API_VERSION, SysInfoNamespaceRPCInterface
+from rpcinterface import API_VERSION
 
 import unittest
 
@@ -15,6 +15,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_sysinfo_ps(self):
 		print "testing sysinfo.ps()"
 		ps_list = json.loads(self.rpc_proxy.sysinfo.ps())
+
 		self.assertEqual(type(ps_list), type({}))
 
     def test_sysinfo_sysInfo(self):

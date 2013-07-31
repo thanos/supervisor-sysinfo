@@ -41,19 +41,21 @@ Setup
 =====
 
 * In your supervisor.conf file setup::
-[inet_http_server]
-port = *:9002
-username = very_safe
-password = very_safe
+
+	[inet_http_server]
+	port = *:9002
+	username = very_safe
+	password = very_safe
 
 * Uncomment::
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+	
+	[rpcinterface:supervisor]
+	supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 * Add::
 
-[rpcinterface:sysinfo]
-supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_rpcinterface
+	[rpcinterface:sysinfo]
+	supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_rpcinterface
 
 
 
@@ -65,12 +67,12 @@ Usage
 
 You can look at the test code but effectively you need to do this::
 
-import xmlrpclib,pprint, json
+	import xmlrpclib,pprint, json
 
-rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002)
+	rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002)
 
-ps_list = json.loads(rpc_proxy.sysinfo.ps())
-pprint.pprint(ps_list)
+	ps_list = json.loads(rpc_proxy.sysinfo.ps())
+	pprint.pprint(ps_list)
 
-sysInfo =  json.loads(rpc_proxy.sysinfo.sysInfo())
-pprint.pprint(sysInfo)
+	sysInfo =  json.loads(rpc_proxy.sysinfo.sysInfo())
+	pprint.pprint(sysInfo)

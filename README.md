@@ -8,8 +8,6 @@ a supervisor rpc extension for obtaining the hosts system and process informatio
 Requirements
 ============
 
-Core
-----
 
 * Python 2.7+
 * supervisor 3.0+
@@ -23,13 +21,13 @@ Why
 
 I use supervisor on many of my servers for control and monitoring and I needed a way to interrogate the sevrers for top, df and ps type information. Rather than have my own status server I've extended supervisor's XML-RPC api  to offer two new functions:
   * sysinfo.ps which returns a dictionary keyed by pid of the output of ps aux.
-  * sysinfo.sysInfo which retuns cpu, memory and disk usage information.
-  Both fuctions return json strings. I do this as a work around the 32-bit int limitation of the XML-RPC standard.
+  * sysinfo.sysInfo which reruns cpu, memory and disk usage information.
+  Both functions return json strings. I do this as a work around the 32-bit int limitation of the XML-RPC standard.
 
 
 
 Installation
-=============
+============
 
 Use the usual ways::
     
@@ -52,7 +50,7 @@ password = very_safe
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
-* Add 
+* Add::
 
 [rpcinterface:sysinfo]
 supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_rpcinterface
@@ -62,10 +60,10 @@ supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_r
 
 
 
-Security Usage
-==============
+Usage
+=====
 
-You can look at the test code but effectivly you need to do this::
+You can look at the test code but effectively you need to do this::
 
 import xmlrpclib,pprint, json
 
@@ -76,5 +74,3 @@ pprint.pprint(ps_list)
 
 sysInfo =  json.loads(rpc_proxy.sysinfo.sysInfo())
 pprint.pprint(sysInfo)
-
-

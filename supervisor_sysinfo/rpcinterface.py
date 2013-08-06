@@ -123,9 +123,13 @@ class SysInfoNamespaceRPCInterface:
                            u'total': 4294967296,
                            u'used': 4240707584}}
         """
-        def inode_usage(mountpoint):
+        def add_inode_usage(mountpoint, disk_usage):
             istats = os.statvfs(mountpoint)
-            return dict(inodes =  istats[statvfs.F_FILES], ifree = istats[statvfs.F_FFREE], iprecent = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]))
+            disk_usage['inodes'] =  istats[statvfs.F_FILES]
+            disk_usage['ifree'] = istats[statvfs.F_FFREE]
+            disk_usage['iprecent'] = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES])) if istats[statvfs.F_FILES] else 0
+            return disk_usage
+            
         def extract(obj, *args):
             return dict([(arg, getattr(obj, arg)) for arg in args])
         data ={}
@@ -134,7 +138,7 @@ class SysInfoNamespaceRPCInterface:
         data['phymem_usage'] = extract(psutil.phymem_usage(), 'total', 'used', 'free', 'percent')
         disk_partitions=[]
         data['disk_partitions'] = [dict( partition_info = extract(partition, 'mountpoint', 'device'), 
-                                        disk_usage = extract(psutil.disk_usage(partition.mountpoint), 'total', 'used', 'free', 'percent').update(inode_usage(partition.mountpoint))) 
+                                        disk_usage = add_inode_usage(partition.mountpoint, extract(psutil.disk_usage(partition.mountpoint), 'total', 'used', 'free', 'percent'))) 
                                         for partition in psutil.disk_partitions(all=False)]
         return json.dumps(data)
 

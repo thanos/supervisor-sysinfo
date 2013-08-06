@@ -1,7 +1,7 @@
 from supervisor.supervisord import SupervisorStates
 from supervisor.xmlrpc import Faults
 from supervisor.xmlrpc import RPCError
-import subprocess, psutil, json
+import subprocess, psutil, json, math, os, statvfs
 
 API_VERSION = '0.1'
 
@@ -93,6 +93,10 @@ class SysInfoNamespaceRPCInterface:
         return json.dumps(processes)
 
 
+
+
+
+
     def sysInfo(self):
         """
         @return  json string repr of dict.
@@ -108,7 +112,10 @@ class SysInfoNamespaceRPCInterface:
          u'disk_partitions': [{u'disk_usage': {u'free': 309265399808.0,
                                                u'percent': 69.0,
                                                u'total': 999345127424.0,
-                                               u'used': 689817583616.0},
+                                               u'used': 689817583616.0
+                                               u'iprecent': 7.0, 
+                                               u'ifree': 491028, 
+                                               u'inodes': 524288},
                                u'partition_info': {u'device': u'/dev/disk0s2',
                                                    u'mountpoint': u'/'}}],
          u'phymem_usage': {u'free': 44892160,
@@ -116,11 +123,10 @@ class SysInfoNamespaceRPCInterface:
                            u'total': 4294967296,
                            u'used': 4240707584}}
         """
+        def inode_usage(mountpoint):
+            istats = os.statvfs(mountpoint)
+            return dict(inodes =  istats[statvfs.F_FILES], ifree = istats[statvfs.F_FFREE], iprecent = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]))
         def extract(obj, *args):
-            def norm(x):
-                 if type(x) == type(1):
-                        return  float(x) 
-                 return x
             return dict([(arg, norm(getattr(obj, arg))) for arg in args])
         data ={}
         data['cpu_percent'] = psutil.cpu_percent(interval=1, percpu=False)
@@ -128,7 +134,7 @@ class SysInfoNamespaceRPCInterface:
         data['phymem_usage'] = extract(psutil.phymem_usage(), 'total', 'used', 'free', 'percent')
         disk_partitions=[]
         data['disk_partitions'] = [dict( partition_info = extract(partition, 'mountpoint', 'device'), 
-                                        disk_usage = extract(psutil.disk_usage(partition.mountpoint), 'total', 'used', 'free', 'percent')) 
+                                        disk_usage = extract(psutil.disk_usage(partition.mountpoint), 'total', 'used', 'free', 'percent').update(inode_usage(partition.mountpoint))) 
                                         for partition in psutil.disk_partitions(all=False)]
         return json.dumps(data)
 

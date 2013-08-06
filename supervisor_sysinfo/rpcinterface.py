@@ -113,7 +113,7 @@ class SysInfoNamespaceRPCInterface:
                                                u'percent': 69.0,
                                                u'total': 999345127424.0,
                                                u'used': 689817583616.0
-                                               u'iprecent': 7.0, 
+                                               u'ipercent': 7.0, 
                                                u'ifree': 491028, 
                                                u'inodes': 524288},
                                u'partition_info': {u'device': u'/dev/disk0s2',
@@ -127,7 +127,7 @@ class SysInfoNamespaceRPCInterface:
             istats = os.statvfs(mountpoint)
             disk_usage['inodes'] =  istats[statvfs.F_FILES]
             disk_usage['ifree'] = istats[statvfs.F_FFREE]
-            disk_usage['iprecent'] = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]) if istats[statvfs.F_FILES] else 0
+            disk_usage['ipercent'] = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]) if istats[statvfs.F_FILES] else 0
             return disk_usage
 
         def extract(obj, *args):

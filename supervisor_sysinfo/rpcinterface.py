@@ -127,7 +127,7 @@ class SysInfoNamespaceRPCInterface:
             istats = os.statvfs(mountpoint)
             return dict(inodes =  istats[statvfs.F_FILES], ifree = istats[statvfs.F_FFREE], iprecent = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]))
         def extract(obj, *args):
-            return dict([(arg, norm(getattr(obj, arg))) for arg in args])
+            return dict([(arg, getattr(obj, arg)) for arg in args])
         data ={}
         data['cpu_percent'] = psutil.cpu_percent(interval=1, percpu=False)
         data['cpu_times'] = extract(psutil.cpu_times(percpu=False), 'user', 'nice', 'system', 'idle')

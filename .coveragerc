@@ -1,0 +1,14 @@
+[paths]
+source =
+   src/supervisor_sysinfo
+   */site-packages/supervisor_sysinfo
+
+[run]
+branch = True
+source = supervisor_sysinfo
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*

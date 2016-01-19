@@ -1,7 +1,11 @@
+import subprocess, psutil, json, math, os, statvfs
+
 from supervisor.supervisord import SupervisorStates
 from supervisor.xmlrpc import Faults
 from supervisor.xmlrpc import RPCError
-import subprocess, psutil, json, math, os, statvfs
+
+
+from sys_info import ps, sys_info
 
 API_VERSION = '0.1'
 
@@ -81,16 +85,7 @@ class SysInfoNamespaceRPCInterface:
                       u'vsz': u'2745052'}}
         """
         self._update('ps')
-        processes ={}
-        lines = subprocess.check_output(["ps", "aux"]).split("\n")[1:]
-        for line in lines:
-            line = line.strip()
-            if line:
-                row  = line.split()
-                user, pid, cpu, mem, vsz, rss, tt, stat, started, time = row[:10]
-                command = ' '.join(row[10:])
-                processes[pid] = dict(user=user,  cpu=cpu, mem =mem, vsz=vsz, rss=rss, tt=tt, stat= stat, started = started, time=time, command=command)
-        return json.dumps(processes)
+        return json.dumps(ps())
 
 
 
@@ -123,24 +118,7 @@ class SysInfoNamespaceRPCInterface:
                            u'total': 4294967296,
                            u'used': 4240707584}}
         """
-        def add_inode_usage(mountpoint, disk_usage):
-            istats = os.statvfs(mountpoint)
-            disk_usage['inodes'] =  istats[statvfs.F_FILES]
-            disk_usage['ifree'] = istats[statvfs.F_FFREE]
-            disk_usage['ipercent'] = math.ceil(float(100*(istats[statvfs.F_FILES]-istats[statvfs.F_FFREE]))/istats[statvfs.F_FILES]) if istats[statvfs.F_FILES] else 0
-            return disk_usage
-
-        def extract(obj, *args):
-            return dict([(arg, getattr(obj, arg)) for arg in args])
-        data ={}
-        data['cpu_percent'] = psutil.cpu_percent(interval=1, percpu=False)
-        data['cpu_times'] = extract(psutil.cpu_times(percpu=False), 'user', 'nice', 'system', 'idle')
-        data['phymem_usage'] = extract(psutil.phymem_usage(), 'total', 'used', 'free', 'percent')
-        disk_partitions=[]
-        data['disk_partitions'] = [dict( partition_info = extract(partition, 'mountpoint', 'device'), 
-                                        disk_usage = add_inode_usage(partition.mountpoint, extract(psutil.disk_usage(partition.mountpoint), 'total', 'used', 'free', 'percent'))) 
-                                        for partition in psutil.disk_partitions(all=False)]
-        return json.dumps(data)
+        return json.dumps(sys_info())
 
 def make_sysinfo_rpcinterface(supervisord, **config):
     return SysInfoNamespaceRPCInterface(supervisord)

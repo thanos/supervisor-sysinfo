@@ -15,7 +15,7 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 import sys
-
+from supervisor_sysinfo import monitor
 
 def main(argv=sys.argv):
     """
@@ -28,5 +28,5 @@ def main(argv=sys.argv):
     Does stuff.
     """
 
-    print(argv)
+    monitor.Monitor(sys.argv[1], sys.argv[2]).run()
     return 0

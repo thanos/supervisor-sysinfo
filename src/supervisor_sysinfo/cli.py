@@ -28,5 +28,5 @@ def main(argv=sys.argv):
     Does stuff.
     """
 
-    monitor.Monitor(sys.argv[1], sys.argv[2]).run()
+    monitor.Monitor(sys.argv[1]).run()
     return 0

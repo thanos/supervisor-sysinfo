@@ -130,9 +130,9 @@ Add::
 	[rpcinterface:sysinfo]
 	supervisor.rpcinterface_factory = supervisor_sysinfo.rpcinterface:make_sysinfo_rpcinterface
 
-
-
-
+  [eventlistener:monitor]
+  command=supervisor_monitor http://some_end_point.com:7000/monitor
+  events= TICK_60
 
 
 
@@ -143,7 +143,7 @@ You can look at the test code but effectively you need to do this::
 
 	import xmlrpclib,pprint, json
 
-	rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002)
+	rpc_proxy =  xmlrpclib.ServerProxy('http://very_safe:very_safe@127.0.0.1:9002')
 
 	ps_list = json.loads(rpc_proxy.sysinfo.ps())
 	pprint.pprint(ps_list)

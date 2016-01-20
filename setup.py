@@ -64,7 +64,7 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
     install_requires=[
-        # eg: 'aspectlib==1.1.1', 'six>=1.7',
+        'requests>=2.9.1', 'psutil>=3.4.1', 'supervisor>=3.2.0'
     ],
     extras_require={
         # eg:

@@ -14,7 +14,7 @@ Installation
 
 ::
 
-    pip install supervisor_sysinfo
+    pip install git+https://github.com/thanos/supervisor-sysinfo.git
 
 Documentation
 =============
